@@ -5,8 +5,12 @@ public class Buffer {
     private static final Integer amountOfSpace = 2;
     private static Integer packetsInQueue = 0;
 
-    public static Boolean isBufferBusy() {
+    public static Boolean isFull() {
         return (packetsInQueue.equals(amountOfSpace));
+    }
+
+    public static Boolean isHavePacket() {
+        return ((packetsInQueue == 1) || (packetsInQueue == 2));
     }
 
     public static void addPacket() {

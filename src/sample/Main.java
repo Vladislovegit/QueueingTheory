@@ -7,6 +7,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import sample.models.Buffer;
+import sample.models.Generator;
 
 public class Main extends Application {
     public TextField txtFldFirstChannelProbability;

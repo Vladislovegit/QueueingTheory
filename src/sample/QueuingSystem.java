@@ -1,6 +1,10 @@
 package sample;
 
-public class QueuingSystem {
+import sample.models.Buffer;
+import sample.models.Channel;
+import sample.models.Generator;
+
+class QueuingSystem {
 
     private Channel firstChannel;
     private Channel secondChannel;
@@ -12,7 +16,7 @@ public class QueuingSystem {
         return denials;
     }
 
-    public QueuingSystem(Double probability1, Double probability2) {
+    QueuingSystem(Double probability1, Double probability2) {
         firstChannel = new Channel(probability1);
         secondChannel = new Channel(probability2);
         queueLength = 0;
@@ -20,15 +24,15 @@ public class QueuingSystem {
         packetsProcessed = 0;
     }
 
-    public Integer getQueueLength() {
+    Integer getQueueLength() {
         return queueLength;
     }
 
-    public Integer getPacketsProcessed() {
+    Integer getPacketsProcessed() {
         return packetsProcessed;
     }
 
-    public void generateNextState(Integer tactNumber) {
+    void generateNextState(Integer tactNumber) {
         queueLength += Buffer.getLength();
 
         if (secondChannel.isBusy()) {

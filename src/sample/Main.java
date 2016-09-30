@@ -15,30 +15,33 @@ public class Main extends Application {
     public TextField txtFldTactNumber;
     public Text txtQ;
     public Text txtL;
+    QueuingSystem system = null;
 
     @Override
-    public void start(Stage primaryStage) throws Exception{
+    public void start(Stage primaryStage) throws Exception {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("main_layout.fxml"));
         fxmlLoader.setController(this);
-        primaryStage.setTitle("Simulation Model");
+        primaryStage.setTitle("Queuing Theory");
         primaryStage.setScene(new Scene(fxmlLoader.load(), 330, 175));
         primaryStage.show();
-
-        btnCalculate.setOnMouseClicked(event ->  {
-                QueuingSystem system = new QueuingSystem(
-                        Double.parseDouble(txtFldFirstChannelProbability.getText()),
-                        Double.parseDouble(txtFldSecondChannelProbability.getText())
-                );
-                Integer tactNumber = Integer.parseInt(txtFldTactNumber.getText());
-                for (int i = 0; i < tactNumber; i++) {
-                    system.generateNextState(i);
-                }
-                txtL.setText(((Double) (system.getQueueLength() / (double) tactNumber)).toString());
-                txtQ.setText(((Double) (1 - system.getDenials() / (double) tactNumber)).toString());
-            }
-        );
+        btnCalculate.setOnMouseClicked(event -> onBtnClick());
     }
 
+    private void onBtnClick() {
+        system = new QueuingSystem(
+                Double.parseDouble(txtFldFirstChannelProbability.getText()),
+                Double.parseDouble(txtFldSecondChannelProbability.getText())
+        );
+        Integer tactNumber = Integer.parseInt(txtFldTactNumber.getText());
+        Generator.reset();
+        Buffer.reset();
+        for (int i = 0; i < tactNumber - 1; i++) {
+            system.generateNextState(i);
+        }
+        txtL.setText(((Double) (system.getQueueLength() / (double) tactNumber )).toString());
+        txtQ.setText(((Double) (system.getPacketsProcessed() / (double) Generator.getPacketsGenerated())).toString());
+
+    }
 
     public static void main(String[] args) {
         launch(args);

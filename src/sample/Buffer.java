@@ -28,4 +28,8 @@ public class Buffer {
     public static Integer getLength() {
         return packetsInQueue;
     }
+
+    public static void reset() {
+        packetsInQueue = 0;
+    }
 }

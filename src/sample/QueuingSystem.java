@@ -2,60 +2,68 @@ package sample;
 
 public class QueuingSystem {
 
-    private Channel channel1;
-    private Channel channel2;
+    private Channel firstChannel;
+    private Channel secondChannel;
     private Integer queueLength;
     private Integer denials;
+    private Integer packetsProcessed;
 
     public Integer getDenials() {
         return denials;
     }
 
     public QueuingSystem(Double probability1, Double probability2) {
-        channel1 = new Channel(probability1);
-        channel2 = new Channel(probability2);
+        firstChannel = new Channel(probability1);
+        secondChannel = new Channel(probability2);
         queueLength = 0;
         denials = 0;
+        packetsProcessed = 0;
     }
 
     public Integer getQueueLength() {
         return queueLength;
     }
 
+    public Integer getPacketsProcessed() {
+        return packetsProcessed;
+    }
+
     public void generateNextState(Integer tactNumber) {
         queueLength += Buffer.getLength();
 
-        if (channel2.isBusy()) {
-            if (channel2.isPacketProcessed()) {
+        if (secondChannel.isBusy()) {
+            if (secondChannel.isPacketProcessed()) {
+                packetsProcessed++;
+
                 if (Buffer.isHavePacket()) {
                     Buffer.removePacket();
-                    channel2.startProcessing();
-                    if(channel1.isBlocked()) {
-                        channel1.unblock();
+                    secondChannel.startProcessing();
+                    if(firstChannel.isBlocked()) {
+                        firstChannel.unblock();
                     }
                 }
             }
         }
 
-        if (!channel1.isBlocked()) {
-            if (channel1.isBusy()) {
-                if (channel1.isPacketProcessed()) {
+        if (!firstChannel.isBlocked()) {
+            if (firstChannel.isBusy()) {
+                if (firstChannel.isPacketProcessed()) {
                     if (!Buffer.isFull()) {
                         Buffer.addPacket();
-                        if (!channel2.isBusy()) {
+                        if (!secondChannel.isBusy()) {
                             Buffer.removePacket();
-                            channel2.startProcessing();
+                            secondChannel.startProcessing();
                         }
                     } else {
-                        channel1.block();
+                        firstChannel.block();
                     }
                 }
             }
         }
 
         if (Generator.isPacketReady(tactNumber)) {
-            if (!channel1.isBlocked() && !channel1.isBusy()) {
-                channel1.startProcessing();
+            if (!firstChannel.isBlocked() && !firstChannel.isBusy()) {
+                firstChannel.startProcessing();
             } else {
                 denials++;
             }
